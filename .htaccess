@@ -1,0 +1,8 @@
+#1 ---- Prevent listing
+
+IndexIgnore *
+Options -Indexes
+
+#2 ---- Without extension
+
+Options +MultiViews
