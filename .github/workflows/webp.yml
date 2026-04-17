@@ -1,0 +1,57 @@
+name: Convert images to WebP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'images/**'
+      - '!images/**/gen/**'
+      - '.github/workflows/webp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install libwebp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Convert
+        run: |
+          set -eu
+          count=0
+          while IFS= read -r -d '' src; do
+            case "$src" in *"/gen/"*) continue;; esac
+            dir=$(dirname "$src")
+            base=$(basename "$src")
+            name="${base%.*}"
+            ext="${base##*.}"
+            ext_lc=$(printf '%s' "$ext" | tr '[:upper:]' '[:lower:]')
+            out_dir="$dir/gen"
+            out="$out_dir/$name.webp"
+            mkdir -p "$out_dir"
+            case "$ext_lc" in
+              gif)       gif2webp -mixed -m 6 -q 85 "$src" -o "$out" >/dev/null ;;
+              png)       cwebp -quiet -q 90 -alpha_q 100 "$src" -o "$out" ;;
+              jpg|jpeg)  cwebp -quiet -q 85 "$src" -o "$out" ;;
+            esac
+            count=$((count+1))
+          done < <(find images -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' \) -print0)
+          echo "processed $count file(s)"
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add images
+          if git diff --staged --quiet; then
+            echo "no changes to commit"
+          else
+            git commit -m "chore: auto-generate WebP variants [skip ci]"
+            git push
+          fi
