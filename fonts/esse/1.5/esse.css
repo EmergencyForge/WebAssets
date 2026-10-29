@@ -1,0 +1,29 @@
+/* Esse 1.5 und Esse Mono 1.5, je eine variable Datei pro Stil (Stärke 100 bis 900). SIL OFL 1.1, siehe ../OFL.txt */
+@font-face {
+  font-family: "Esse";
+  src: url("Esse-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Esse";
+  src: url("Esse-Italic-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Esse Mono";
+  src: url("EsseMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Esse Mono";
+  src: url("EsseMono-Italic-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
